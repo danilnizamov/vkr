@@ -10,6 +10,36 @@
 using namespace std;
 
 
+
+class Timer {
+private:
+    chrono::time_point<chrono::system_clock> starting_point{};
+    chrono::time_point<chrono::system_clock> ending_point{};
+    long double counter = 0.0;
+    int counter_increment = 0;
+public:
+    Timer() = default;
+
+    void start() {this->starting_point = chrono::system_clock::now();}
+
+    void end() {this->ending_point = chrono::system_clock::now();}
+
+    long double get_result() {
+        chrono::duration<double> elapsed = ending_point - starting_point;
+        return elapsed.count();
+    }
+
+    void operator ++ (int nothing) {
+        this->counter += this->get_result();
+        this->counter_increment++;
+    }
+
+    long double get_average() const {
+        return this->counter / this->counter_increment;
+    }
+};
+
+
 template <typename T>
 vector<vector<T>> split_vector(vector<T> vec, int parts) {
     int size = vec.size();
@@ -366,10 +396,12 @@ void foo(Cabel cabel, int start) {
 
 int main() {
     for (int start = 100; start <= 100000; start += 5000) {
-        double time_sum_reg = 0.0;
-        double time_sum_thread = 0.0;
+        Timer regular_timer;
+        Timer thread_timer;
+
         for (int j = 1; j <= 100; j++) {
-            auto start_regular = chrono::system_clock::now();
+            regular_timer.start();
+
             Cabel cabel(0.08, 0.8, 1000, "test_cabel");
             InfChargedLinesSystem sys = cabel.eqCableSplit(3, 0.01);
             sys.calc_charges();
@@ -380,20 +412,27 @@ int main() {
                 targets.emplace_back(true_x, 0.5);
             }
             vector<long double> E = sys.calcE(targets);
-            auto end_regular = chrono::system_clock::now();
-            auto start_thread = chrono::system_clock::now();
+
+            regular_timer.end();
+            regular_timer++;
+
+
+            thread_timer.start();
+
             thread first(foo, cabel, start);
             thread second(foo, cabel, start);
             first.join();
             second.join();
+
             auto end_thread = chrono::system_clock::now();
-            chrono::duration<double> elapsed_seconds_regular = end_regular - start_regular;
-            chrono::duration<double> elapsed_seconds_thread = end_thread - start_thread;
-            time_sum_reg += elapsed_seconds_regular.count();
-            time_sum_thread += elapsed_seconds_thread.count();
+
+            thread_timer.end();
+            thread_timer++;
+
         }
-        cout << (double) time_sum_reg / 50.0 << "\t";
-        cout << (double) time_sum_thread / 50.0 << "\t";
+
+        cout << regular_timer.get_average() << "\t";
+        cout << thread_timer.get_average() << "\t";
         cout << start << endl;
     }
 }
