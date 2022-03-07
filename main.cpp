@@ -121,7 +121,6 @@ public:
 
 template <typename T>
 vector<T> solve_equation_bottom(Matrix<T> A, vector<T> b) {
-    //Решение СЛАУ. А — нижнетреугольная матрица.
     vector<T> res(b.size());
     res[0] = b[0] / A[0][0];
     for (int i = 1; i < res.size(); i++) {
@@ -268,14 +267,6 @@ public:
     explicit InfChargedLinesSystem(vector<InfChargedLine> lines) {
         this->lines = std::move(lines);
     }
-    vector<InfChargedLinesSystem> split(int N) {
-        vector<vector<InfChargedLine>> splitted = split_vector(lines, N);
-        vector<InfChargedLinesSystem> res;
-        for (int i = 0; i < splitted.size(); i++) {
-            res[i] = InfChargedLinesSystem(splitted[i]);
-        }
-        return res;
-    }
 
     void mirror() {
         int size = lines.size();
@@ -381,7 +372,7 @@ public:
 };
 
 
-void foo_split_n(Cabel cabel, int start, int end, InfChargedLinesSystem sys) {
+void foo_split_n(int start, int end, InfChargedLinesSystem sys) {
     sys.calc_charges();
     vector<Point> targets;
     for (int x = start; x <= end; x += 1) {
@@ -393,28 +384,14 @@ void foo_split_n(Cabel cabel, int start, int end, InfChargedLinesSystem sys) {
 
 
 void check_thread_over_reg_attempts_split_N() {  //TODO: run with 2, 4, 8 threads
-    for (int N = 50; N <= 500; N+=50) {
-        for (int start = 20000; start <= 30000; start += 15000) {
+    for (int N = 350; N <= 500; N+=50) {
+        for (int start = 40000; start <= 50000; start += 15000) {
             Timer regular_timer;
             Timer thread_timer;
 
             for (int j = 1; j <= 40; j++) {
 
-                Cabel cabel_(0.08, 0.8, 1000, "test_cabel");
-                InfChargedLinesSystem sys_ = cabel_.eqCableSplit(N, 0.01);
-                vector<InfChargedLine> lines1;
-                vector<InfChargedLine> lines2;
 
-                for (int i = 0; i < sys_.lines.size(); i++) {
-                    if (i < sys_.lines.size() / 2) {
-                        lines1.push_back(sys_.lines[i]);
-                    } else {
-                        lines2.push_back(sys_.lines[i]);
-                    }
-                }
-
-                InfChargedLinesSystem part1(lines1);
-                InfChargedLinesSystem part2(lines2);
 
                 regular_timer.start();
 
@@ -434,8 +411,63 @@ void check_thread_over_reg_attempts_split_N() {  //TODO: run with 2, 4, 8 thread
 
                 thread_timer.start();
 
-                thread s1(foo_split_n, cabel, -start, start, part1);
-                thread s2(foo_split_n, cabel, -start, start, part2);
+                Cabel cabel_(0.08, 0.8, 1000, "test_cabel");
+                InfChargedLinesSystem sys_ = cabel_.eqCableSplit(N, 0.01);
+                vector<InfChargedLine> lines1;
+                vector<InfChargedLine> lines2;
+                vector<InfChargedLine> lines3;
+                vector<InfChargedLine> lines4;
+                vector<InfChargedLine> lines5;
+                vector<InfChargedLine> lines6;
+                vector<InfChargedLine> lines7;
+                vector<InfChargedLine> lines8;
+
+                for (int i = 0; i < sys_.lines.size(); i++) {
+                    if (i < sys_.lines.size() / 8) {
+                        lines1.push_back(sys_.lines[i]);
+                    } else if (i <= sys_.lines.size() / 4) {
+                        lines2.push_back(sys_.lines[i]);
+                    } else if (i <= sys_.lines.size() * 3 / 8) {
+                        lines3.push_back(sys_.lines[i]);
+                    } else if (i <= sys_.lines.size() / 2) {
+                        lines4.push_back(sys_.lines[i]);
+                    } else if (i <= sys_.lines.size() * 5 / 8) {
+                        lines5.push_back(sys_.lines[i]);
+                    } else if (i <= sys_.lines.size() * 6 / 8) {
+                        lines6.push_back(sys_.lines[i]);
+                    } else if (i <= sys_.lines.size() * 7 / 8) {
+                        lines7.push_back(sys_.lines[i]);
+                    } else {
+                        lines8.push_back(sys_.lines[i]);
+                    }
+                }
+
+                InfChargedLinesSystem part1(lines1);
+                InfChargedLinesSystem part2(lines2);
+                InfChargedLinesSystem part3(lines3);
+                InfChargedLinesSystem part4(lines4);
+                InfChargedLinesSystem part5(lines5);
+                InfChargedLinesSystem part6(lines6);
+                InfChargedLinesSystem part7(lines7);
+                InfChargedLinesSystem part8(lines8);
+
+                thread s1(foo_split_n, -start, start, part1);
+                thread s2(foo_split_n, -start, start, part2);
+                thread s3(foo_split_n, -start, start, part3);
+                thread s4(foo_split_n, -start, start, part4);
+                thread s5(foo_split_n, -start, start, part5);
+                thread s6(foo_split_n, -start, start, part6);
+                thread s7(foo_split_n, -start, start, part7);
+                thread s8(foo_split_n, -start, start, part8);
+
+                s1.join();
+                s2.join();
+                s3.join();
+                s4.join();
+                s5.join();
+                s6.join();
+                s7.join();
+                s8.join();
 
                 thread_timer.end();
                 thread_timer++;
