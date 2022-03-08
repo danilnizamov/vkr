@@ -384,7 +384,7 @@ void foo_split_n(int start, int end, InfChargedLinesSystem sys) {
 
 
 void check_thread_over_reg_attempts_split_N() {  //TODO: run with 2, 4, 8 threads
-    for (int N = 350; N <= 500; N+=50) {
+    for (int N = 50; N <= 500; N+=50) {
         for (int start = 40000; start <= 50000; start += 15000) {
             Timer regular_timer;
             Timer thread_timer;
@@ -393,7 +393,7 @@ void check_thread_over_reg_attempts_split_N() {  //TODO: run with 2, 4, 8 thread
 
 
 
-                regular_timer.start();
+                /*regular_timer.start();
 
                 Cabel cabel(0.08, 0.8, 1000, "test_cabel");
                 InfChargedLinesSystem sys = cabel.eqCableSplit(N, 0.01);
@@ -407,7 +407,7 @@ void check_thread_over_reg_attempts_split_N() {  //TODO: run with 2, 4, 8 thread
                 vector<long double> E = sys.calcE(targets);
 
                 regular_timer.end();
-                regular_timer++;
+                regular_timer++;*/
 
                 thread_timer.start();
 
