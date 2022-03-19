@@ -42,6 +42,7 @@ public:
 
 template <typename T>
 vector<vector<T>> split_vector(vector<T> vec, int parts) {
+    //TODO: fix
     vector <vector<T> > bunches;
     int bunch_size = vec.size() / parts;
     for(size_t i = 0; i < vec.size(); i += bunch_size) {
@@ -384,8 +385,8 @@ void foo_split_n(int start, int end, InfChargedLinesSystem sys) {
 
 
 void check_thread_over_reg_attempts_split_N() {  //TODO: run with 2, 4, 8 threads
-    for (int N = 50; N <= 500; N+=50) {
-        for (int start = 40000; start <= 50000; start += 15000) {
+    for (int N = 32; N <= 33; N+=50) {
+        for (int start = 1000; start <= 500000; start += 10000) {
             Timer regular_timer;
             Timer thread_timer;
 
@@ -393,7 +394,7 @@ void check_thread_over_reg_attempts_split_N() {  //TODO: run with 2, 4, 8 thread
 
 
 
-                /*regular_timer.start();
+                regular_timer.start();
 
                 Cabel cabel(0.08, 0.8, 1000, "test_cabel");
                 InfChargedLinesSystem sys = cabel.eqCableSplit(N, 0.01);
@@ -407,7 +408,7 @@ void check_thread_over_reg_attempts_split_N() {  //TODO: run with 2, 4, 8 thread
                 vector<long double> E = sys.calcE(targets);
 
                 regular_timer.end();
-                regular_timer++;*/
+                regular_timer++;
 
                 thread_timer.start();
 
@@ -481,40 +482,6 @@ void check_thread_over_reg_attempts_split_N() {  //TODO: run with 2, 4, 8 thread
         }
     }
 }
-
-
-void solve(vector<Point> targets, InfChargedLinesSystem sys) {
-    vector<long double> E = sys.calcE(std::move(targets));
-    cout << E << endl;
-}
-
-
-void check_thread_reg_equality() {
-
-    Cabel cabel(0.08, 0.8, 1000, "test_cabel");
-    InfChargedLinesSystem sys = cabel.eqCableSplit(3, 0.01);
-    sys.calc_charges();
-
-    vector<Point> targets;
-    for (int x = -20; x <= 20; x += 1) {
-        double true_x = (double) x / 100.0;
-        targets.emplace_back(true_x, 0.5);
-    }
-
-    vector< vector<Point> > targets_bunches = split_vector(targets, 2);
-    //TODO: fix (maybe by hands)
-
-
-    cout << "regular" << endl;
-    solve(targets, sys);
-    thread f(solve, targets_bunches[0], sys);
-    thread s(solve, targets_bunches[1], sys);
-    cout << "first thread" << endl;
-    f.join();
-    cout << "second thread" << endl;
-    s.join();
-}
-
 
 int main() {
     //check_thread_reg_equality();
