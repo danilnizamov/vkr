@@ -384,6 +384,24 @@ void foo_split_n(int start, int end, InfChargedLinesSystem sys) {
 }
 
 
+vector<Point> gen_linear_points_set() {
+    vector<Point> targets;
+    //TODO: to do
+    return targets;
+}
+
+
+vector<Point> get_contour_points_set(double x, double y, double R) {
+    vector<Point> targets;
+    for (int angle = 0; angle < 360; angle++) {
+        double target_x = R * cos((double)angle);
+        double target_y = R * sin((double)angle);
+        targets.emplace_back(Point(target_x, target_y));
+    }
+    return targets;
+}
+
+
 void check_thread_over_reg_attempts_split_N() {  //TODO: run with 2, 4, 8 threads
     for (int N = 32; N <= 33; N+=50) {
         for (int start = 1000; start <= 500000; start += 10000) {
