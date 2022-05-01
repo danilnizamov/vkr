@@ -404,11 +404,11 @@ vector<Point> get_contour_points_set(double x, double y, double R) {
 
 void check_thread_over_reg_attempts_split_N() {  //TODO: run with 2, 4, 8 threads
     for (int N = 32; N <= 33; N+=50) {
-        for (int start = 1000; start <= 500000; start += 10000) {
+        for (int start = 15000; start <= 120000; start += 10000) {
             Timer regular_timer;
             Timer thread_timer;
 
-            for (int j = 1; j <= 40; j++) {
+            for (int j = 1; j <= 20; j++) {
 
 
 
@@ -495,8 +495,7 @@ void check_thread_over_reg_attempts_split_N() {  //TODO: run with 2, 4, 8 thread
 
             cout << regular_timer.get_average() << "\t";
             cout << thread_timer.get_average() << "\t";
-            cout << start << "\t";
-            cout << N << endl;
+            cout << start << endl;
         }
     }
 }
